@@ -7,7 +7,7 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  @Auth(['role_user'])
+  @Auth(['role_admin'])
   async getAllUsers() {
     return await this.usersService.getAllUsers();
   }
