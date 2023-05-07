@@ -16,37 +16,41 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest() as Request;
+    try {
+      const request = context.switchToHttp().getRequest() as Request;
 
-    const authorizationHeader = request.headers.authorization?.split(' ');
+      const authorizationHeader = request.headers.authorization?.split(' ');
 
-    if (!authorizationHeader) {
-      throw new UnauthorizedException('Пользователь не авторизован');
+      if (!authorizationHeader) {
+        throw new UnauthorizedException('Пользователь не авторизован');
+      }
+
+      const authMethod = authorizationHeader[0];
+
+      if (authMethod !== 'Bearer') {
+        throw new UnauthorizedException(
+          'Поддерживается авторизация только по Bearer JWT токену',
+        );
+      }
+
+      const accessToken = authorizationHeader[1];
+
+      if (!accessToken) {
+        throw new UnauthorizedException('Пользователь не авторизован');
+      }
+
+      const userData: ValidateAccessToken =
+        this.tokensService.validateAccessToken(accessToken);
+
+      if (!userData) {
+        throw new UnauthorizedException('Пользователь не авторизован');
+      }
+
+      context['userData'] = userData;
+
+      return true;
+    } catch (err) {
+      throw new UnauthorizedException(err);
     }
-
-    const authMethod = authorizationHeader[0];
-
-    if (authMethod !== 'Bearer') {
-      throw new UnauthorizedException(
-        'Поддерживается авторизация только по Bearer JWT токену',
-      );
-    }
-
-    const accessToken = authorizationHeader[1];
-
-    if (!accessToken) {
-      throw new UnauthorizedException('Пользователь не авторизован');
-    }
-
-    const userData: ValidateAccessToken =
-      this.tokensService.validateAccessToken(accessToken);
-
-    if (!userData) {
-      throw new UnauthorizedException('Пользователь не авторизован');
-    }
-
-    context['userData'] = userData;
-
-    return true;
   }
 }

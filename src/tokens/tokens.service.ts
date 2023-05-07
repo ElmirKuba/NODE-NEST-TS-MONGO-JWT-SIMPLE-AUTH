@@ -59,7 +59,7 @@ export class TokensService {
 
   generateAccessToken(payload: UserDto): string {
     return jsonwebtoken.sign(payload, environment.ACCESS_KEY_JWT, {
-      expiresIn: '1d',
+      expiresIn: '15s',
     });
   }
 
@@ -77,6 +77,8 @@ export class TokensService {
   }
 
   validateAccessToken(accessToken: string): ValidateAccessToken {
+    console.log('userData', 3232323);
+
     return jsonwebtoken.verify(
       accessToken,
       environment.ACCESS_KEY_JWT,
