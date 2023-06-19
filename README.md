@@ -1,4 +1,4 @@
-# Простой пример хорошего backend на express js с авторизацией + mongo db
+# Простой пример хорошего backend на nest.js с авторизацией + mongo db
 
 1. Установить Mongo DB
 2. Установить MongoDB Compass
